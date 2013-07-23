@@ -1,13 +1,14 @@
 <?php
-class Thingiverse() {
+class Thingiverse {
 
 	CONST BASE_URL = 'https://api.thingiverse.com/';
 
 	public $access_token = NULL;
+	public $code = NULL;
 
 	protected $client_id;
 	protected $client_secret;
-	protected $code;
+	
 	protected $redirect_uri;
 
 	protected $post_params = FALSE;
@@ -31,7 +32,7 @@ class Thingiverse() {
 		$this->_send();
 	}*/
 
-	public function makeURL()
+	public function makeLoginURL()
 	{
 		return 'https://www.thingiverse.com/login/oauth/authorize?client_id=' . $this->client_id . '&edirect_uri=' . $this->redirect_uri;
 	}
@@ -43,7 +44,7 @@ class Thingiverse() {
 		return $this->_send();
 	}
 
-	public function updateThing($username = 'me', $bio = NULL, $location = NULL, $default_license = NULL)
+	public function updateUser($username = 'me', $bio = NULL, $location = NULL, $default_license = NULL)
 	{
 		$this->url = self::BASE_URL . 'users/' . $username;
 
@@ -274,7 +275,7 @@ class Thingiverse() {
 		return $this->_send('POST');
 	}
 
-	public function deleteThing($id)
+	public function deleteLike($id)
 	{
 		$this->url = self::BASE_URL . 'things/' . $id . '/likes';
 
@@ -446,7 +447,7 @@ class Thingiverse() {
 		{
 			if ($this->post_params !== FALSE) 
 				curl_setopt($curl, CURLOPT_POSTFIELDS, $post_params);
-			curl_setopt($curl, CURLOPT_POST, TRUE)	
+			curl_setopt($curl, CURLOPT_POST, TRUE);	
 		}
 		elseif ($type == 'PATCH' OR $type == 'DELETE')
 		{
