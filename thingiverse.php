@@ -235,6 +235,159 @@ class Thingiverse() {
 		return $this->_send('DELETE');
 	}
 
+	public function uploadThingFile($id, $filename)
+	{
+		$this->url = self::BASE_URL . 'things/' . $id . '/files';
+
+		$this->post_params['filename'] = $filename;
+
+		return $this->_send('POST');
+	}
+
+	public function publishThing($id)
+	{
+		$this->url = self::BASE_URL . 'things/' . $id . '/publish';
+
+		return $this->_send('POST');
+	}
+
+	public function getThingCopies($id)
+	{
+		$this->url = self::BASE_URL . 'things/' . $id . '/copies';
+
+		return $this->_send();
+	}
+
+	public function uploadThingCopyImage($id, $filename)
+	{
+		$this->url = self::BASE_URL . 'things/' . $id . '/copies';
+
+		$this->post_params['filename'] = $filename;
+
+		return $this->_send('POST');
+	}
+
+	public function likeThing($id)
+	{
+		$this->url = self::BASE_URL . 'things/' . $id . '/likes';
+
+		return $this->_send('POST');
+	}
+
+	public function deleteThing($id)
+	{
+		$this->url = self::BASE_URL . 'things/' . $id . '/likes';
+
+		return $this->_send('DELETE');
+	}
+
+	public function getFile($id)
+	{
+		$this->url = self::BASE_URL . 'files/' . $id;
+
+		return $this->_send();
+	}
+
+	public function finalizeFile($id)
+	{
+		$this->url = self::BASE_URL . 'files/' . $id . '/finalize';
+
+		return $this->_send('POST');
+	}
+
+	public function getCopies($id = NULL)
+	{
+		$this->url = self::BASE_URL . 'copies/';
+
+		if ($id !== NULL)
+			$this->url .= $id;
+
+		return $this->_send();
+	}
+
+	public function getCopyImages($id)
+	{
+		$this->url = self::BASE_URL . 'copies/' . $id . '/images';
+
+		return $this->_send();
+	}
+
+	public function deleteCopy($id)
+	{
+		$this->url = self::BASE_URL . 'copies/' . $id;
+
+		return $this->_send('DELETE');
+	}
+
+	public function getCollection($id = NULL)
+	{
+		$this->url = self::BASE_URL . 'collections/';
+
+		if ($id !== NULL)
+			$this->url .= $id;
+
+		return $this->_send();
+	}
+
+	public function getCollectionThings($id)
+	{
+		$this->url = self::BASE_URL . 'collections/' . $id . '/things';
+
+		return $this->_send();
+	}
+
+	public function createCollection($name, $description = NULL)
+	{
+		$this->url = self::BASE_URL . 'collections/';
+
+		$this->post_params['name'] = $name;
+		if ($description !== NULL)
+			$this->post_params['description'] = $description;
+
+		return $this->_send('POST');
+	}
+
+	public function addCollectionThing($id, $thing_id, $description = NULL)
+	{
+		$this->url = self::BASE_URL . 'collections/' . $id . '/thing/' . $thing_id;
+		if ($description !== NULL)
+			$this->post_params['description'] = $description;
+
+		return $this->_send('POST');
+	}
+
+	public function deleteCollectionThing($id, $thing_id)
+	{
+		$this->url = self::BASE_URL . 'collections/' . $id . '/thing/' . $thing_id;
+
+		return $this->_send('DELETE');
+	}
+
+	public function updateCollection($id, $name, $description = NULL)
+	{
+		$this->url = self::BASE_URL . 'collections/' . $id;
+
+		$this->post_params['name'] = $name;
+		if ($description !== NULL)
+			$this->post_params['description'] = $description;
+
+		return $this->_send('PATCH');
+	}
+
+	public function deleteCollection($id)
+	{
+		$this->url = self::BASE_URL . 'collections/' . $id;
+
+		return $this->_send('DELETE');
+	}
+
+	public function getNewest()
+	{
+		$this->url = self::BASE_URL . 'newest/';
+
+		return $this->_send();
+	}
+
 	protected function _send($type = 'GET')
 	{
 		$curl = curl_init();
@@ -261,6 +414,8 @@ class Thingiverse() {
 
 		curl_close($curl);
 
+		$this->_reset();
+
 		return json_decode($data);
 	}
 
@@ -271,5 +426,11 @@ class Thingiverse() {
 		$this->post_params['client_secret'] = $this->client_secret;
 		$this->post_params['code']          = $this->code;
 		$this->_send();
+	}
+
+	protected function _reset()
+	{
+		$this->post_params = FALSE;
+		$this->url = FALSE;
 	}
 }
