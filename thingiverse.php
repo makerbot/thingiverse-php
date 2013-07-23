@@ -319,7 +319,7 @@ class Thingiverse() {
 		return $this->_send('DELETE');
 	}
 
-	public function getCollection($id = NULL)
+	public function getCollections($id = NULL)
 	{
 		$this->url = self::BASE_URL . 'collections/';
 
@@ -384,6 +384,54 @@ class Thingiverse() {
 	public function getNewest()
 	{
 		$this->url = self::BASE_URL . 'newest/';
+
+		return $this->_send();
+	}
+
+	public function getFeatured()
+	{
+		$this->url = self::BASE_URL . 'featured/';
+
+		return $this->_send();
+	}
+
+	public function search($term)
+	{
+		$this->url = self::BASE_URL . 'search/' . $term;
+
+		return $this->_send();
+	}
+
+	public function getCategories($id = NULL)
+	{
+		$this->url = self::BASE_URL . 'categories/';
+
+		if ($id !== NULL)
+			$this->url .= $id;
+
+		return $this->_send();
+	}
+
+	public function getCategoryThings($id)
+	{
+		$this->url = self::BASE_URL . 'categories/' . $id . '/things';
+
+		return $this->_send();
+	}
+
+	public function getTagThings($tag)
+	{
+		$this->url = self::BASE_URL . 'tags/' . $tag . '/things';
+
+		return $this->_send();
+	}
+
+	public function getTags($tag = NULL)
+	{
+		$this->url = self::BASE_URL . 'tags/';
+
+		if ($tag !== NULL) 
+			$this->url .= $tag;
 
 		return $this->_send();
 	}
