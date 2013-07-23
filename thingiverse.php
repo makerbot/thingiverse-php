@@ -3,12 +3,11 @@ class Thingiverse() {
 
 	CONST BASE_URL = 'https://api.thingiverse.com/';
 
-	public $access_token;
+	public $access_token = NULL;
 
 	protected $client_id;
 	protected $client_secret;
 	protected $code;
-	protected $access_key = NULL;
 	protected $redirect_uri;
 
 	protected $post_params = FALSE;
@@ -22,7 +21,7 @@ class Thingiverse() {
 		$this->client_id = $client_id;
 		$this->client_secret = $client_secret;
 		$this->code = '8b8f87b414ed84352deb2fb6591f50b5';
-		$this->access_key = '4f973581c849ec6e1d6acd8fd4794a3d';
+		$this->access_token = '4f973581c849ec6e1d6acd8fd4794a3d';
 		$this->redirect_uri = 'http://localhost/code';
 	}
 
@@ -255,8 +254,8 @@ class Thingiverse() {
 		
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
-		if ( ! empty($this->access_key))
-			curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->access_key));
+		if ( ! empty($this->access_token))
+			curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->access_token));
 
 		$data = curl_exec($curl);
 
