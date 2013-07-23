@@ -1,10 +1,18 @@
 <?php
+/**
+ * Thingiverse
+ *
+ * A PHP wrapper for the Thingiverse API.
+ *
+ * @package  Thingiverse
+ * @author  Greg Walden <greg.walden@makerbot.com>
+ * @link( , link)
+ */
 class Thingiverse {
 
 	CONST BASE_URL = 'https://api.thingiverse.com/';
 
 	public $access_token = NULL;
-	public $code = NULL;
 
 	protected $client_id;
 	protected $client_secret;
@@ -35,6 +43,15 @@ class Thingiverse {
 	public function makeLoginURL()
 	{
 		return 'https://www.thingiverse.com/login/oauth/authorize?client_id=' . $this->client_id . '&edirect_uri=' . $this->redirect_uri;
+	}
+
+	public function oauth($code)
+	{
+		$this->url = 'https://www.thingiverse.com/login/oauth/access_token';
+		$this->post_params['client_id']     = $this->client_id; 
+		$this->post_params['client_secret'] = $this->client_secret;
+		$this->post_params['code']          = $code;
+		$this->_send();
 	}
 
 	public function getUser($username = 'me')
@@ -466,15 +483,6 @@ class Thingiverse {
 		$this->_reset();
 
 		return json_decode($data);
-	}
-
-	protected function _oauth()
-	{
-		$this->url = 'https://www.thingiverse.com/login/oauth/access_token';
-		$this->post_params['client_id']     = $this->client_id; 
-		$this->post_params['client_secret'] = $this->client_secret;
-		$this->post_params['code']          = $this->code;
-		$this->_send();
 	}
 
 	protected function _reset()
