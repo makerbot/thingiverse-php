@@ -4,34 +4,39 @@
  *
  * A PHP wrapper for the Thingiverse API.
  *
- * @package  Thingiverse
+ * @package  MakerBot
+ * @subpackage Thingiverse
  * @author  Greg Walden <greg.walden@makerbot.com>
- * @link( , link)
+ * @link  https://github.com/gswalden/thingiverse
+ * @version  0.1
  */
 class Thingiverse {
 
-	CONST BASE_URL = 'https://api.thingiverse.com/';
+	const BASE_URL = 'https://api.thingiverse.com/';
 
 	public $access_token = NULL;
 
 	protected $client_id;
 	protected $client_secret;
-	
 	protected $redirect_uri;
 
-	protected $post_params = FALSE;
-	protected $url = FALSE;
+	protected $post_params = NULL;
+	protected $url = NULL;
 
-	protected $available_licenses = ['cc', 'cc-sa', 'cc-nd', 'cc-nc-sa', 'cc-nc-nd', 'pd0', 'gpl', 'lgpl', 'bsd'];
+	protected $available_licenses = array('cc', 'cc-sa', 'cc-nd', 'cc-nc-sa', 'cc-nc-nd', 'pd0', 'gpl', 'lgpl', 'bsd');
 
 	public function __construct()
 	{
-		require 'thingverse_keys.php';
+		require 'thingiverse_keys.php';
+		// Required
 		$this->client_id = $client_id;
 		$this->client_secret = $client_secret;
-		$this->code = '8b8f87b414ed84352deb2fb6591f50b5';
+
+		// Optional, can also be set in Thingiverse app settings 
+		$this->redirect_uri = '';
+		
+		// Optional, if you already have your valid token. Otherwise, call oAuth().
 		$this->access_token = '4f973581c849ec6e1d6acd8fd4794a3d';
-		$this->redirect_uri = 'http://localhost/code';
 	}
 
 	/*public function endpoint($param)
@@ -42,16 +47,23 @@ class Thingiverse {
 
 	public function makeLoginURL()
 	{
-		return 'https://www.thingiverse.com/login/oauth/authorize?client_id=' . $this->client_id . '&edirect_uri=' . $this->redirect_uri;
+		$url = 'https://www.thingiverse.com/login/oauth/authorize?client_id=' . $this->client_id;
+		if ( ! empty($this->redirect_uri))
+			$url .= '&redirect_uri=' . $this->redirect_uri;
+		return $url;
 	}
 
-	public function oauth($code)
+	public function oAuth($code)
 	{
 		$this->url = 'https://www.thingiverse.com/login/oauth/access_token';
 		$this->post_params['client_id']     = $this->client_id; 
 		$this->post_params['client_secret'] = $this->client_secret;
 		$this->post_params['code']          = $code;
-		$this->_send();
+		
+		$response = $this->_send('POST', TRUE);
+		
+		preg_match('/access_token=(\w+)&token_type/', $response, $match);
+		$this->access_token = $match[1];
 	}
 
 	public function getUser($username = 'me')
@@ -454,40 +466,52 @@ class Thingiverse {
 		return $this->_send();
 	}
 
-	protected function _send($type = 'GET')
+	protected function _reset()
 	{
+		$this->post_params = NULL;
+		$this->url = NULL;
+	}
+
+	protected function _send($type = 'GET', $is_oauth = FALSE)
+	{
+		if (empty($this->access_token) && ! $is_oauth)
+			exit('No access token.');
+		if (empty($this->url))
+			exit('No URL.');
+
 		$curl = curl_init();
 
 		curl_setopt($curl, CURLOPT_URL, $this->url);
 
-		if ($type == 'POST')
+		$type = strtoupper($type);
+		switch ($type)
 		{
-			if ($this->post_params !== FALSE) 
-				curl_setopt($curl, CURLOPT_POSTFIELDS, $post_params);
-			curl_setopt($curl, CURLOPT_POST, TRUE);	
-		}
-		elseif ($type == 'PATCH' OR $type == 'DELETE')
-		{
-			curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $type);
+			case 'POST':
+			case 'PATCH':
+			case 'DELETE':
+				curl_setopt($curl, CURLOPT_POSTFIELDS, $this->post_params);
+				curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $type);
+			case 'GET':
+				break;
+			default:
+				exit("Invalid request type: '$type'.");		
 		}
 		
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
-		if ( ! empty($this->access_token))
+		if ( ! $is_oauth)
 			curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->access_token));
 
-		$data = curl_exec($curl);
+		curl_setopt($curl, CURLOPT_TIMEOUT, 10);
+
+		$response = curl_exec($curl);
 
 		curl_close($curl);
 
 		$this->_reset();
 
-		return json_decode($data);
-	}
-
-	protected function _reset()
-	{
-		$this->post_params = FALSE;
-		$this->url = FALSE;
+		if ($is_oauth)
+			return $response;
+		return json_decode($response);
 	}
 }
