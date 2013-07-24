@@ -1,6 +1,9 @@
 ##Thingiverse
 A PHP wrapper for the Thingiverse API.
 
+###Motivation
+Making awesome things easier!
+
 ##Use
 ###Configuration
 1. Login at http://www.thingiverse.com/developers
