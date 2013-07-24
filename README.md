@@ -10,7 +10,7 @@ A PHP wrapper for the Thingiverse API.
 
 ###Implementation
 1. Import thingiverse.php `require_once 'thingiverse.php';`
-2. Create a new instance `$thingiverse = new Thingiverse();`. Optionally enter an access token (if you have it) as a parameter (skip the next two steps if you do this).
+2. Create a new instance `$thingiverse = new Thingiverse();`. Optionally enter an access token (if you have it) as a parameter (skip the next two steps if you do this)
 3. Use `$thingiverse->makeLoginURL();` to create a link to authorize a user account for your app
 4. Once you receive a code from Thingiverse, `$thingiverse->oAuth('code here');`
 5. You're all set! 
