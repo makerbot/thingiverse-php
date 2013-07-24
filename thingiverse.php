@@ -42,12 +42,6 @@ class Thingiverse {
 		$this->access_token = $token;
 	}
 
-	/*public function endpoint($param)
-	{
-		$this->url = self::BASE_URL . $param;
-		$this->_send();
-	}*/
-
 	public function makeLoginURL()
 	{
 		$url = 'https://www.thingiverse.com/login/oauth/authorize?client_id=' . $this->client_id;
@@ -421,6 +415,13 @@ class Thingiverse {
 		return $this->_send();
 	}
 
+	public function getPopular()
+	{
+		$this->url = self::BASE_URL . 'popular/';
+
+		return $this->_send();
+	}
+
 	public function getFeatured()
 	{
 		$this->url = self::BASE_URL . 'featured/';
@@ -430,7 +431,7 @@ class Thingiverse {
 
 	public function search($term)
 	{
-		$this->url = self::BASE_URL . 'search/' . $term;
+		$this->url = self::BASE_URL . 'search/' . urlencode($term);
 
 		return $this->_send();
 	}
@@ -492,7 +493,10 @@ class Thingiverse {
 			case 'POST'  :
 			case 'PATCH' :
 			case 'DELETE':
-				curl_setopt($curl, CURLOPT_POSTFIELDS, $this->post_params);
+				if ( ! $is_oauth)
+					curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($this->post_params));
+				else
+					curl_setopt($curl, CURLOPT_POSTFIELDS, $this->post_params);
 				curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $type);
 			case 'GET':
 				break;
@@ -504,8 +508,7 @@ class Thingiverse {
 
 		if ( ! $is_oauth)
 		{
-			curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->access_token));
-			curl_setopt($curl, CURLOPT_HTTPHEADER, 'Content-Type: application/json');
+			curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->access_token, 'Content-Type: application/json'));
 		}
 
 		curl_setopt($curl, CURLOPT_TIMEOUT, 10);
