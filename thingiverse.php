@@ -17,6 +17,7 @@ class Thingiverse {
 	public $access_token;
 	public $response_data;
 	public $response_code;
+	public $last_response_error;
 
 	protected $client_id;
 	protected $client_secret;
@@ -502,25 +503,46 @@ class Thingiverse {
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
 		if ( ! $is_oauth)
+		{
 			curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $this->access_token));
+			curl_setopt($curl, CURLOPT_HTTPHEADER, 'Content-Type: application/json');
+		}
 
 		curl_setopt($curl, CURLOPT_TIMEOUT, 10);
+		curl_setopt($curl, CURLOPT_HEADER, 1);
 
-		$data      = curl_exec($curl);
-		$curl_info = curl_getinfo($curl);
+		$response = curl_exec($curl);
+		$this->response_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		
+		$header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+		$response_header = substr($response, 0, $header_size);
+		$response_body = substr($response, $header_size);
 
-		// Uncomment next line to see full cURL response info
+		if ($this->response_code != 200)
+		{
+			if (preg_match('/x-error: (.+)/i', $response_header, $match))
+				$this->last_response_error = $match[1];
+			else
+				$this->last_response_error = 'No error given in header. Check response body.';
+		}
+		else
+			$this->last_response_error = '';
+
+		// Uncomment next four lines to see/debug full cURL response
+		// $curl_info = curl_getinfo($curl);
 		// var_dump($curl_info);
+		// var_dump($response_header);
+		// var_dump($response_body);
 
 		curl_close($curl);
 
 		$this->_reset();
 
 		if ($is_oauth)
-			return $data;
+			return $response_body;
 
-		$this->response_data = json_decode($data);
+		$this->response_data = json_decode($response_body);
 
-		return $this->response_code = $curl_info['http_code'];
+		return $this->response_code;
 	}
 }
