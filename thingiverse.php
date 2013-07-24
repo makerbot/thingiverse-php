@@ -5,8 +5,8 @@
  * A PHP wrapper for the Thingiverse API.
  *
  * @package  MakerBot
- * @subpackage Thingiverse
- * @author  Greg Walden <greg.walden@makerbot.com>
+ * @subpackage  Thingiverse
+ * @author  Greg Walden
  * @link  https://github.com/gswalden/thingiverse
  * @version  0.1
  */
@@ -14,7 +14,7 @@ class Thingiverse {
 
 	const BASE_URL = 'https://api.thingiverse.com/';
 
-	public $access_token = NULL;
+	public $access_token;
 
 	protected $client_id;
 	protected $client_secret;
@@ -25,7 +25,7 @@ class Thingiverse {
 
 	protected $available_licenses = array('cc', 'cc-sa', 'cc-nd', 'cc-nc-sa', 'cc-nc-nd', 'pd0', 'gpl', 'lgpl', 'bsd');
 
-	public function __construct()
+	public function __construct($token = NULL)
 	{
 		require 'thingiverse_keys.php';
 		// Required
@@ -36,7 +36,7 @@ class Thingiverse {
 		$this->redirect_uri = '';
 		
 		// Optional, if you already have your valid token. Otherwise, call oAuth().
-		$this->access_token = '4f973581c849ec6e1d6acd8fd4794a3d';
+		$this->access_token = $token;
 	}
 
 	/*public function endpoint($param)
