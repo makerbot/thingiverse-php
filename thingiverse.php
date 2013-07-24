@@ -6,7 +6,7 @@
  *
  * @package  MakerBot
  * @subpackage  Thingiverse
- * @author  Greg Walden
+ * @author  Greg Walden <greg.walden@makerbot.com>
  * @link  https://github.com/gswalden/thingiverse
  * @version  0.1
  */
@@ -15,6 +15,8 @@ class Thingiverse {
 	const BASE_URL = 'https://api.thingiverse.com/';
 
 	public $access_token;
+	public $response_data;
+	public $response_code;
 
 	protected $client_id;
 	protected $client_secret;
@@ -486,8 +488,8 @@ class Thingiverse {
 		$type = strtoupper($type);
 		switch ($type)
 		{
-			case 'POST':
-			case 'PATCH':
+			case 'POST'  :
+			case 'PATCH' :
 			case 'DELETE':
 				curl_setopt($curl, CURLOPT_POSTFIELDS, $this->post_params);
 				curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $type);
@@ -504,14 +506,21 @@ class Thingiverse {
 
 		curl_setopt($curl, CURLOPT_TIMEOUT, 10);
 
-		$response = curl_exec($curl);
+		$data      = curl_exec($curl);
+		$curl_info = curl_getinfo($curl);
+
+		// Uncomment next line to see full cURL response info
+		// var_dump($curl_info);
 
 		curl_close($curl);
 
 		$this->_reset();
 
 		if ($is_oauth)
-			return $response;
-		return json_decode($response);
+			return $data;
+
+		$this->response_data = json_decode($data);
+
+		return $this->response_code = $curl_info['http_code'];
 	}
 }
