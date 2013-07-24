@@ -235,7 +235,7 @@ class Thingiverse {
 		return $this->_send('PATCH');
 	}
 
-	public function createThing($id, $name, $license, $category, $description = NULL, $instructions = NULL, $is_wip = NULL, $tags = NULL, $ancestors = NULL)
+	public function createThing($name, $license, $category, $description = NULL, $instructions = NULL, $is_wip = NULL, $tags = NULL, $ancestors = NULL)
 	{
 		$this->url = self::BASE_URL . 'things/';
 
