@@ -30,14 +30,13 @@ class Thingiverse {
 
 	public function __construct($token = NULL)
 	{
-		require 'thingiverse_keys.php';
 		// Required
-		$this->client_id = $client_id;
-		$this->client_secret = $client_secret;
+		$this->client_id = '';
+		$this->client_secret = '';
 
 		// Optional, can also be set in Thingiverse app settings 
 		$this->redirect_uri = '';
-		
+
 		// Optional, if you already have your valid token. Otherwise, call oAuth().
 		$this->access_token = $token;
 	}
@@ -70,7 +69,7 @@ class Thingiverse {
 		return $this->_send();
 	}
 
-	public function updateUser($username = 'me', $bio = NULL, $location = NULL, $default_license = NULL)
+	public function updateUser($username, $bio = NULL, $location = NULL, $default_license = NULL, $full_name = NULL)
 	{
 		$this->url = self::BASE_URL . 'users/' . $username;
 
@@ -80,6 +79,8 @@ class Thingiverse {
 			$this->post_params['location'] = $location;
 		if ($default_license !== NULL && in_array($default_license, $this->available_licenses))
 			$this->post_params['default_license'] = $default_license;
+		if ($full_name !== NULL)
+			$this->post_params['full_name'] = $full_name;
 
 		return $this->_send('PATCH');
 	}
