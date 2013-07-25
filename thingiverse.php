@@ -30,13 +30,14 @@ class Thingiverse {
 
 	public function __construct($token = NULL)
 	{
+		require 'thingiverse_keys.php';
 		// Required
-		$this->client_id = '';
-		$this->client_secret = '';
+		$this->client_id = $client_id;
+		$this->client_secret = $client_secret;
 
 		// Optional, can also be set in Thingiverse app settings 
 		$this->redirect_uri = '';
-
+		
 		// Optional, if you already have your valid token. Otherwise, call oAuth().
 		$this->access_token = $token;
 	}
