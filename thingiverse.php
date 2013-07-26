@@ -36,7 +36,7 @@ class Thingiverse {
 		$this->client_secret = $client_secret;
 
 		// Optional, can also be set in Thingiverse app settings 
-		$this->redirect_uri = '';
+		$this->redirect_uri = 'http://thing.dev/example';
 		
 		// Optional, if you already have your valid token. Otherwise, call oAuth().
 		$this->access_token = $token;
