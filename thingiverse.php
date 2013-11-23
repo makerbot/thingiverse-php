@@ -423,9 +423,10 @@ class Thingiverse {
 		return $this->_send();
 	}
 
-	public function getFeatured()
+	public function getFeatured($return_complete = FALSE)
 	{
 		$this->url = self::BASE_URL . 'featured/';
+		$this->url .= ($return_complete) ? '?return=complete' : '';
 
 		return $this->_send();
 	}
