@@ -142,11 +142,19 @@ class Thingiverse {
 		return $this->_send();
 	}
 
-	public function getThingImages($id, $image_id = NULL)
+	public function getThingImages($id, $image_id = NULL, $type = NULL, $size = NULL)
 	{
 		$this->url = self::BASE_URL . 'things/' . $id . '/images/';
 		if ($image_id !== NULL)
 			$this->url .= $image_id;
+		$query = array(
+			'type' => $type,
+			'size' => $size
+		);
+		$string = http_build_query($query);
+		if ( ! empty($string)) {
+			$this->url .= '?' . $string;
+		}
 
 		return $this->_send();
 	}
@@ -424,9 +432,10 @@ class Thingiverse {
 		return $this->_send();
 	}
 
-	public function getFeatured()
+	public function getFeatured($return_complete = FALSE)
 	{
 		$this->url = self::BASE_URL . 'featured/';
+		$this->url .= ($return_complete) ? '?return=complete' : '';
 
 		return $this->_send();
 	}
