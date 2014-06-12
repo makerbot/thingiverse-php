@@ -8,7 +8,12 @@
  * @subpackage  Thingiverse
  * @author  Greg Walden <greg.walden@makerbot.com>
  * @link  https://github.com/gswalden/thingiverse
- * @version  0.1
+ * @version  0.1.1
+ *
+ * History:
+ * version 0.1 - first version
+ * version 0.1.1 - fixed a bug with getCategories(), getCollections() and getCopies()
+ *
  */
 class Thingiverse {
 
@@ -333,10 +338,10 @@ class Thingiverse {
 
 	public function getCopies($id = NULL)
 	{
-		$this->url = self::BASE_URL . 'copies/';
+		$this->url = self::BASE_URL . 'copies';
 
 		if ($id !== NULL)
-			$this->url .= $id;
+			$this->url .= '/'.$id;
 
 		return $this->_send();
 	}
@@ -357,10 +362,10 @@ class Thingiverse {
 
 	public function getCollections($id = NULL)
 	{
-		$this->url = self::BASE_URL . 'collections/';
+		$this->url = self::BASE_URL . 'collections';
 
 		if ($id !== NULL)
-			$this->url .= $id;
+			$this->url .= '/'.$id;
 
 		return $this->_send();
 	}
@@ -448,10 +453,10 @@ class Thingiverse {
 
 	public function getCategories($id = NULL)
 	{
-		$this->url = self::BASE_URL . 'categories/';
+		$this->url = self::BASE_URL . 'categories';
 
 		if ($id !== NULL)
-			$this->url .= $id;
+			$this->url .= '/'.$id;
 
 		return $this->_send();
 	}
